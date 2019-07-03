@@ -47,7 +47,7 @@ namespace WinForms1
             InitializeComponent();
             ClientSize = new Size(MapWidth * PieceSize, MapHeight * PieceSize);
             DoubleBuffered = true;
-            Dig(MapWidth, MapHeight,Map);
+            DigLabyrinth(MapWidth, MapHeight,Map);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -149,7 +149,7 @@ namespace WinForms1
             }
         }
 
-        private static void Dig(int width, int heigth, Piece[,] map)
+        private static void DigLabyrinth(int width, int heigth, Piece[,] map)
         {
             if (map is null)
             {
@@ -185,7 +185,7 @@ namespace WinForms1
 
             int count = 0;
 
-            map[nowX, nowY].PieceParameter = PieceParameter.Road;
+            map[nowX, nowY].State = PieceState.Road;
 
             while (true)
             {
@@ -240,23 +240,23 @@ namespace WinForms1
             switch (direction)
             {
                 case Direction.Up:
-                    map[nowX, nowY - 1].PieceParameter = PieceParameter.Road;
-                    map[nowX, nowY - 2].PieceParameter = PieceParameter.Road;
+                    map[nowX, nowY - 1].State = PieceState.Road;
+                    map[nowX, nowY - 2].State = PieceState.Road;
                     nowY -= 2;
                     break;
                 case Direction.Down:
-                    map[nowX, nowY + 1].PieceParameter = PieceParameter.Road;
-                    map[nowX, nowY + 2].PieceParameter = PieceParameter.Road;
+                    map[nowX, nowY + 1].State = PieceState.Road;
+                    map[nowX, nowY + 2].State = PieceState.Road;
                     nowY += 2;
                     break;
                 case Direction.Right:
-                    map[nowX + 1, nowY].PieceParameter = PieceParameter.Road;
-                    map[nowX + 2, nowY].PieceParameter = PieceParameter.Road;
+                    map[nowX + 1, nowY].State = PieceState.Road;
+                    map[nowX + 2, nowY].State = PieceState.Road;
                     nowX += 2;
                     break;
                 case Direction.Left:
-                    map[nowX - 1, nowY].PieceParameter = PieceParameter.Road;
-                    map[nowX - 2, nowY].PieceParameter = PieceParameter.Road;
+                    map[nowX - 1, nowY].State = PieceState.Road;
+                    map[nowX - 2, nowY].State = PieceState.Road;
                     nowX -= 2;
                     break;
             }
@@ -302,13 +302,13 @@ namespace WinForms1
 
         private void GameLoad()
         {
-            Dig(MapWidth, MapHeight, Map);
+            DigLabyrinth(MapWidth, MapHeight, Map);
             (m_x, m_y) = (1, 1);
             GameClear = false;
         }
     }
 
-    [DebuggerDisplay("IsRoad = {_isRoad}")]
+    [DebuggerDisplay("State = {State}")]
     public struct Piece
     {
         bool _isRoad;
@@ -316,29 +316,29 @@ namespace WinForms1
         public bool IsRoad => _isRoad;
         public bool IsWall => !_isRoad;
 
-        public PieceParameter PieceParameter
+        public PieceState State
         {
             get
             {
                 if (_isRoad)
                 {
-                    return PieceParameter.Road;
+                    return PieceState.Road;
                 }
-                return PieceParameter.Wall;
+                return PieceState.Wall;
             }
             set
             {
-                _isRoad = value == PieceParameter.Road;
+                _isRoad = value == PieceState.Road;
             }
         }
 
-        public Piece(PieceParameter pieceParam)
+        public Piece(PieceState pieceParam)
         {
-            _isRoad = pieceParam == PieceParameter.Road;
+            _isRoad = pieceParam == PieceState.Road;
         }
     }
 
-    public enum PieceParameter
+    public enum PieceState
     {
         Wall,
         Road,
