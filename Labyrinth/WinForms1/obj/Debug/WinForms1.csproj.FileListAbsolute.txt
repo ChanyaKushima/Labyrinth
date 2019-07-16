@@ -8,3 +8,13 @@ C:\Users\h2928\Desktop\WinForms1\WinForms1\obj\Debug\WinForms1.csproj.CoreCompil
 C:\Users\h2928\Desktop\WinForms1\WinForms1\obj\Debug\WinForms1.exe
 C:\Users\h2928\Desktop\WinForms1\WinForms1\obj\Debug\WinForms1.pdb
 C:\Users\h2928\Desktop\WinForms1\WinForms1\obj\Debug\WinForms1.Form1.resources
+C:\Users\h2928\Desktop\Labyrinth\WinForms1\bin\Debug\WinForms1.exe.config
+C:\Users\h2928\Desktop\Labyrinth\WinForms1\bin\Debug\WinForms1.exe
+C:\Users\h2928\Desktop\Labyrinth\WinForms1\bin\Debug\WinForms1.pdb
+C:\Users\h2928\Desktop\Labyrinth\WinForms1\obj\Debug\WinForms1.csprojAssemblyReference.cache
+C:\Users\h2928\Desktop\Labyrinth\WinForms1\obj\Debug\WinForms1.Form1.resources
+C:\Users\h2928\Desktop\Labyrinth\WinForms1\obj\Debug\WinForms1.Properties.Resources.resources
+C:\Users\h2928\Desktop\Labyrinth\WinForms1\obj\Debug\WinForms1.csproj.GenerateResource.cache
+C:\Users\h2928\Desktop\Labyrinth\WinForms1\obj\Debug\WinForms1.csproj.CoreCompileInputs.cache
+C:\Users\h2928\Desktop\Labyrinth\WinForms1\obj\Debug\WinForms1.exe
+C:\Users\h2928\Desktop\Labyrinth\WinForms1\obj\Debug\WinForms1.pdb
