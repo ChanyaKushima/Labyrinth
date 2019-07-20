@@ -43,6 +43,7 @@ namespace WinForms1
 
         const int GoalX = MapWidth - 2;
         const int GoalY = MapHeight - 2;
+
         Brush wallBrush = Brushes.DeepSkyBlue;
         Brush roadBrush = Brushes.AliceBlue;
         Brush myBrush = Brushes.SkyBlue;
@@ -51,7 +52,6 @@ namespace WinForms1
         private Image MapImage;
         private Piece[,] Map = new Piece[MapWidth, MapHeight];
 
-        private Random rand = new Random();
         private Timer timer = new Timer()
         {
             Enabled = false,
@@ -67,7 +67,6 @@ namespace WinForms1
 
         public Form1()
         {
-            InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
             ClientSize = new Size(MapDisplayWidth, MapDisplayHeight);
             DoubleBuffered = true;
@@ -96,7 +95,7 @@ namespace WinForms1
 
             if (GameClear)
             {
-                var fontSize = Math.Min(ClientSize.Width / 4, ClientSize.Height / 2);
+                const int fontSize = (MapDisplayWidth > MapDisplayHeight << 1) ? MapDisplayWidth / 4 : MapDisplayHeight / 2;
                 var font = new Font(FontFamily.GenericSerif, fontSize);
 
                 g.FillRectangle(BackScreen, MapDisplayRect);
@@ -128,36 +127,40 @@ namespace WinForms1
 
         private void MoveMeByKey_OnTick(object sender, EventArgs e)
         {
-            if (!GameClear)
+            if (GameClear) { return; }
+
+            bool moved = false;
+
+            if (IsKeyDown(Key.Up))
             {
-                if (IsKeyDown(Key.Up))
-                {
-                    MoveMe(0, -1);
-                }
-                else if (IsKeyDown(Key.Down))
-                {
-                    MoveMe(0, 1);
-                }
-                else if (IsKeyDown(Key.Right))
-                {
-                    MoveMe(1, 0);
-                }
-                else if (IsKeyDown(Key.Left))
-                {
-                    MoveMe(-1, 0);
-                }
-                else
-                {
-                    timer.Stop();
-                    return;
-                }
+                moved |= MoveMe(0, -1);
             }
-            if (m_x == GoalX && m_y == GoalY)
+            if (IsKeyDown(Key.Down))
             {
-                GameClear = true;
+                moved |= MoveMe(0, 1);
+            }
+            if (IsKeyDown(Key.Right))
+            {
+                moved |= MoveMe(1, 0);
+            }
+            if (IsKeyDown(Key.Left))
+            {
+                moved |= MoveMe(-1, 0);
+            }
+
+            if (moved)
+            {
+                if (m_x == GoalX && m_y == GoalY)
+                {
+                    GameClear = true;
+                    timer.Stop();
+                }
+                Refresh();
+            }
+            else
+            {
                 timer.Stop();
             }
-            Refresh();
         }
 
         private bool MoveMe(int dx, int dy)
@@ -168,8 +171,9 @@ namespace WinForms1
                 {
                     m_x += dx;
                     m_y += dy;
+                    return true;
                 }
-                return true;
+                return false;
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -182,7 +186,7 @@ namespace WinForms1
             int width = map.GetLength(0);
             int height = map.GetLength(1);
 
-            ThrowHelper(width, height, map);
+            CheckArguments(width, height, map);
 
             if (!mapInited)
             {
@@ -190,7 +194,7 @@ namespace WinForms1
                 {
                     for (int y = 0; y < height; y++)
                     {
-                        map[x, y] = default;
+                        map[x, y] = new Piece();
                     }
                 }
             }
@@ -252,7 +256,7 @@ namespace WinForms1
             return mapImage;
         }
 
-        private static void ThrowHelper(int width, int heigth, Piece[,] map)
+        private static void CheckArguments(int width, int heigth, Piece[,] map)
         {
             if (map is null)
             {
@@ -380,7 +384,10 @@ namespace WinForms1
     [DebuggerDisplay("State = {State}")]
     public struct Piece
     {
-        bool _isRoad;
+        public static Piece Road = new Piece(true);
+        public static Piece Wall = new Piece(false);
+
+        private bool _isRoad;
 
         public bool IsRoad => _isRoad;
         public bool IsWall => !_isRoad;
@@ -404,6 +411,11 @@ namespace WinForms1
         public Piece(PieceState pieceParam)
         {
             _isRoad = pieceParam == PieceState.Road;
+        }
+
+        private Piece(bool isRoad)
+        {
+            _isRoad = isRoad;
         }
     }
 
