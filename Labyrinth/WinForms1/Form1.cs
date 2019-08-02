@@ -35,9 +35,9 @@ namespace WinForms1
         static readonly Size MapDisplaySize = new Size(MapDisplayWidth, MapDisplayHeight);
         static readonly Rectangle MapDisplayRect = new Rectangle(default, MapDisplaySize);
 
-        const int PieceSize = 5;
-        const int MapWidth = 361;
-        const int MapHeight = 201;
+        const int PieceSize = 2;
+        const int MapWidth = 661;
+        const int MapHeight = 351;
         const int MapDisplayWidth = MapWidth * PieceSize;
         const int MapDisplayHeight = MapHeight * PieceSize;
 
@@ -63,7 +63,8 @@ namespace WinForms1
 
         bool GameClear = false;
 
-        private static List<(int X, int Y)> GeneralPurposeList = new List<(int X, int Y)>();
+        private static readonly List<(int X, int Y)> GeneralPurposeList = new List<(int X, int Y)>();
+        private static readonly Random rand = new Random();
 
         public Form1()
         {
@@ -72,8 +73,12 @@ namespace WinForms1
             DoubleBuffered = true;
             timer.Tick += MoveMeByKey_OnTick;
 
+            DateTime start = DateTime.Now;
             DigLabyrinth(Map, true);
+            DateTime end = DateTime.Now;
             MapImage = GetMapImage(Map, roadBrush, wallBrush);
+
+            Text = DefaultTitle + " - " + (end - start).TotalMilliseconds.ToString();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -86,7 +91,6 @@ namespace WinForms1
             const float goalMargin = (PieceSize - goalSize) / 2.0f;
             Graphics g = e.Graphics;
 
-            DateTime start = DateTime.Now;
 
             g.DrawImage(MapImage, new Point());
 
@@ -101,9 +105,6 @@ namespace WinForms1
                 g.FillRectangle(BackScreen, MapDisplayRect);
                 g.DrawString("Goal!", font, Brushes.Red, CenterPosition, FormatCenter);
             }
-            DateTime end = DateTime.Now;
-
-            Text = DefaultTitle + " - " + (end - start).TotalMilliseconds.ToString();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -199,15 +200,13 @@ namespace WinForms1
                 }
             }
 
-            Random rand = new Random();
-
             const int startX = 1;
             const int startY = 1;
 
             int nowX = startX;
             int nowY = startY;
 
-            List<(int X, int Y)> digablePoints = null;
+            List<(int X, int Y)> digablePoints = new List<(int X, int Y)>();
 
             int count = 0;
 
@@ -217,22 +216,21 @@ namespace WinForms1
             {
                 Dig1Line(map, ref nowX, ref nowY);
 
-                var preDigablePoints = digablePoints ?? new List<(int X, int Y)>();
-                var tmpResult = preDigablePoints.
+                var preDigablePoints = digablePoints;
+                var tmpResult = preDigablePoints.AsParallel().
                     Where((point) => CanDigSomeDirection(point.X, point.Y, map));
 
                 digablePoints = tmpResult.ToList();
 
-                if (digablePoints.Count == 0)
-                {
-                    digablePoints = GetDigablePoints(width, height, map);
-                }
-
                 count = digablePoints.Count;
-
                 if (count == 0)
                 {
-                    break;
+                    digablePoints = GetDigablePoints(width, height, map);
+                    count = digablePoints.Count;
+                    if (count == 0)
+                    {
+                        break;
+                    }
                 }
 
                 (nowX, nowY) = digablePoints[rand.Next(count)];
@@ -243,15 +241,23 @@ namespace WinForms1
         {
             Image mapImage = new Bitmap(MapDisplayWidth, MapDisplayHeight);
             var g = Graphics.FromImage(mapImage);
+            var roadArias = new Rectangle[(MapHeight - 1) * (MapWidth / 2) - 1];
 
+            int i = 0;
             for (int x = 0; x < MapWidth; x++)
             {
                 for (int y = 0; y < MapHeight; y++)
                 {
-                    Brush brush = map[x, y].IsRoad ? roadBrush : wallBrush;
-                    g.FillRectangle(brush, x * PieceSize, y * PieceSize, PieceSize, PieceSize);
+                    if (map[x, y].IsRoad)
+                    {
+                        roadArias[i++] = new Rectangle(x * PieceSize, y * PieceSize, PieceSize, PieceSize);
+                    }
                 }
             }
+            // 壁の描画
+            g.FillRectangle(wallBrush, new Rectangle(Point.Empty, MapDisplaySize));
+            // 道の描画
+            g.FillRectangles(roadBrush, roadArias);
 
             return mapImage;
         }
@@ -290,7 +296,6 @@ namespace WinForms1
         private static void Dig1Line(Piece[,] map, ref int nowX, ref int nowY)
         {
             List<Direction> movableDirections = new List<Direction>(4);
-            Random rand = new Random();
 
             while (true)
             {
@@ -357,9 +362,9 @@ namespace WinForms1
                 case Direction.Left:
                     return nowX > 2 && map[nowX - 0, nowY].IsRoad && map[nowX - 2, nowY].IsWall;
                 case Direction.Down:
-                    return nowY < map.GetLength(1) - 3 && map[nowX, nowY + 0].IsRoad && map[nowX, nowY + 2].IsWall;
+                    return nowY < MapHeight - 3 && map[nowX, nowY + 0].IsRoad && map[nowX, nowY + 2].IsWall;
                 case Direction.Right:
-                    return nowX < map.GetLength(0) - 3 && map[nowX + 0, nowY].IsRoad && map[nowX + 2, nowY].IsWall;
+                    return nowX < MapWidth - 3 && map[nowX + 0, nowY].IsRoad && map[nowX + 2, nowY].IsWall;
                 default:
                     return false;
             }

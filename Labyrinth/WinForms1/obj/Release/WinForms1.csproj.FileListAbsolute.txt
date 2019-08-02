@@ -28,3 +28,12 @@ C:\Users\h2928\Desktop\Labyrinth\WinForms1\obj\Release\WinForms1.csproj.Generate
 C:\Users\h2928\Desktop\Labyrinth\WinForms1\obj\Release\WinForms1.csproj.CoreCompileInputs.cache
 C:\Users\h2928\Desktop\Labyrinth\WinForms1\obj\Release\WinForms1.exe
 C:\Users\h2928\Desktop\Labyrinth\WinForms1\obj\Release\WinForms1.pdb
+E:\C# SourceCode\Labyrinth\Labyrinth\WinForms1\bin\Release\WinForms1.exe.config
+E:\C# SourceCode\Labyrinth\Labyrinth\WinForms1\bin\Release\WinForms1.exe
+E:\C# SourceCode\Labyrinth\Labyrinth\WinForms1\bin\Release\WinForms1.pdb
+E:\C# SourceCode\Labyrinth\Labyrinth\WinForms1\obj\Release\WinForms1.csprojAssemblyReference.cache
+E:\C# SourceCode\Labyrinth\Labyrinth\WinForms1\obj\Release\WinForms1.Properties.Resources.resources
+E:\C# SourceCode\Labyrinth\Labyrinth\WinForms1\obj\Release\WinForms1.csproj.GenerateResource.cache
+E:\C# SourceCode\Labyrinth\Labyrinth\WinForms1\obj\Release\WinForms1.csproj.CoreCompileInputs.cache
+E:\C# SourceCode\Labyrinth\Labyrinth\WinForms1\obj\Release\WinForms1.exe
+E:\C# SourceCode\Labyrinth\Labyrinth\WinForms1\obj\Release\WinForms1.pdb
