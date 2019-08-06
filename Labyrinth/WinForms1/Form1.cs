@@ -13,9 +13,9 @@ using System.Windows.Input;
 using static System.Windows.Input.Keyboard;
 
 namespace WinForms1
-{
-
+{ 
     using System.Windows.Forms;
+
     public partial class Form1 : Form
     {
         private enum Direction
@@ -35,9 +35,9 @@ namespace WinForms1
         static readonly Size MapDisplaySize = new Size(MapDisplayWidth, MapDisplayHeight);
         static readonly Rectangle MapDisplayRect = new Rectangle(default, MapDisplaySize);
 
-        const int PieceSize = 2;
-        const int MapWidth = 661;
-        const int MapHeight = 351;
+        const int PieceSize = 20;
+        const int MapWidth = 61;
+        const int MapHeight = 31;
         const int MapDisplayWidth = MapWidth * PieceSize;
         const int MapDisplayHeight = MapHeight * PieceSize;
 
@@ -85,7 +85,7 @@ namespace WinForms1
         {
             base.OnPaint(e);
 
-            const int mySize = ((int)(PieceSize * 0.8) > 1) ? (int)(PieceSize * 0.8) : 1;
+            const int mySize = (PieceSize > 1) ? PieceSize : 1;
             const int goalSize = mySize;
             const float myMargin = (PieceSize - mySize) / 2.0f;
             const float goalMargin = (PieceSize - goalSize) / 2.0f;
@@ -99,7 +99,7 @@ namespace WinForms1
 
             if (GameClear)
             {
-                const int fontSize = (MapDisplayWidth > MapDisplayHeight << 1) ? MapDisplayWidth / 4 : MapDisplayHeight / 2;
+                const int fontSize = (MapDisplayWidth > MapDisplayHeight * 2) ? MapDisplayWidth / 4 : MapDisplayHeight / 2;
                 var font = new Font(FontFamily.GenericSerif, fontSize);
 
                 g.FillRectangle(BackScreen, MapDisplayRect);
@@ -216,7 +216,7 @@ namespace WinForms1
             {
                 Dig1Line(map, ref nowX, ref nowY);
 
-                var preDigablePoints = digablePoints;
+                IEnumerable<(int X,int Y)> preDigablePoints = digablePoints;
                 var tmpResult = preDigablePoints.AsParallel().
                     Where((point) => CanDigSomeDirection(point.X, point.Y, map));
 
@@ -250,10 +250,11 @@ namespace WinForms1
                 {
                     if (map[x, y].IsRoad)
                     {
-                        roadArias[i++] = new Rectangle(x * PieceSize, y * PieceSize, PieceSize, PieceSize);
+                        roadArias[i++] = new Rectangle(x * PieceSize-PieceSize/4, y * PieceSize-PieceSize / 4, PieceSize+ PieceSize / 2, PieceSize+ PieceSize / 2);
                     }
                 }
             }
+
             // 壁の描画
             g.FillRectangle(wallBrush, new Rectangle(Point.Empty, MapDisplaySize));
             // 道の描画
@@ -380,7 +381,7 @@ namespace WinForms1
         private void GameLoad()
         {
             DigLabyrinth(Map, false);
-            MapImage=GetMapImage(Map, roadBrush, wallBrush);
+            MapImage = GetMapImage(Map, roadBrush, wallBrush);
             (m_x, m_y) = (1, 1);
             GameClear = false;
         }
